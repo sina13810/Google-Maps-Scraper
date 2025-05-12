@@ -6,9 +6,8 @@ from scraper.communicator import Communicator
 import tkinter as tk
 from tkinter import ttk,  WORD
 from scraper.scraper import Backend
-from scraper.common  import Common
+from scraper.common import Common
 import threading
-
 
 
 class Frontend:
@@ -57,7 +56,7 @@ class Frontend:
             command=self.getinput,
             style="my.TButton",
         )
-        self.submit_button.place(x=355, y=320)
+        self.submit_button.place(x=355, y=380)
 
         """for output format entry"""
         self.outputFormatButtonLabel = ttk.Label(
@@ -99,8 +98,34 @@ class Frontend:
             "Welcome to Google Maps Scraper!\n\nLet's start scraping..."
         )
 
+        """Latitude entry"""
+        self.latitude_label = ttk.Label(
+            self.root,
+            text="Latitude:",
+            font=("Franklin Gothic Medium", 17),
+            foreground="green",
+            background="white",
+        )
+        self.latitude_label.place(x=255, y=280)
+
+        self.latitude_box = ttk.Entry(self.root, width=30, font=("Arial", 15))
+        self.latitude_box.place(x=355, y=285)
+
+        """Longitude entry"""
+        self.longitude_label = ttk.Label(
+            self.root,
+            text="Longitude:",
+            font=("Franklin Gothic Medium", 17),
+            foreground="green",
+            background="white",
+        )
+        self.longitude_label.place(x=255, y=330)
+
+        self.longitude_box = ttk.Entry(self.root, width=30, font=("Arial", 15))
+        self.longitude_box.place(x=355, y=335)
+
         self.init_communicator()
-    
+
     def init_communicator(self):
         Communicator.set_frontend_object(self)
 
@@ -116,18 +141,20 @@ class Frontend:
     def getinput(self):
         self.searchQuery = self.search_box.get()
         self.outputFormatValue = self.outputFormatButton.get()
+        self.latitude = self.latitude_box.get()
+        self.longitude = self.longitude_box.get()
 
         if len(self.searchQuery) == 0 and len(self.outputFormatValue) == 0:
             self.__replacingtext(text="Oops! Your query is not valid")
-
         elif len(self.searchQuery) == 0:
             self.__replacingtext(text="Oops! You did empty search")
         elif len(self.outputFormatValue) == 0:
             self.__replacingtext(text="Oops! You did not select output format")
-
+        elif len(self.latitude) == 0 or len(self.longitude) == 0:
+            self.__replacingtext(
+                text="Oops! You did not provide latitude and longitude")
         else:
             self.submit_button.config(state="disabled")
-
             self.searchQuery = self.searchQuery.lower()
             self.outputFormatValue = self.outputFormatValue.lower()
             self.headlessMode = self.healdessCheckBoxVar.get()
@@ -150,11 +177,12 @@ class Frontend:
         backend = Backend(
             self.searchQuery,
             self.outputFormatValue,
+            self.latitude,
+            self.longitude,
             healdessmode=self.headlessMode
         )
-
         backend.mainscraping()
-    
+
     def end_processing(self):
         self.submit_button.config(state="normal")
         try:
@@ -164,8 +192,8 @@ class Frontend:
             pass
 
     def messageshowing(
-        self,
-        message):
+            self,
+            message):
 
         self.__replacingtext(message)
 
