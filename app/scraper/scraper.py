@@ -61,7 +61,7 @@ class Backend(Base):
             if self.latitude and self.longitude:
                 link_of_page = (
                     f"https://www.google.com/maps/search/{querywithplus}/"
-                    f"@{self.latitude},{self.longitude},15z/"
+                    f"@{self.latitude},{self.longitude},19z/"
                 )
             else:
                 link_of_page = f"https://www.google.com/maps/search/{querywithplus}/"
